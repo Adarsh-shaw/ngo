@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sahaayak – Smart Volunteer Allocation Platform</title>
+  <meta name="description" content="Sahaayak helps NGOs and emergency teams efficiently match and assign volunteers to tasks using AI-powered smart allocation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="landing-page">
+
+  <!-- Animated background -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <div class="brand-icon"><i class="fas fa-hands-helping"></i></div>
+        <span class="brand-name">Sahaayak</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">How it Works</a>
+        <a href="#impact" class="nav-link">Impact</a>
+        <a href="/login" class="btn btn-outline-white">Login</a>
+        <a href="/signup" class="btn btn-primary-glow">Get Started</a>
+      </div>
+      <button class="nav-hamburger" id="navHamburger"><i class="fas fa-bars"></i></button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <i class="fas fa-bolt"></i> AI-Powered Volunteer Matching
+      </div>
+      <h1 class="hero-title">
+        Connect <span class="gradient-text">Volunteers</span><br/>
+        to Tasks That <span class="gradient-text">Matter Most</span>
+      </h1>
+      <p class="hero-subtitle">
+        Sahaayak intelligently matches volunteers to tasks based on skills, location,
+        and availability — enabling NGOs and emergency teams to respond faster and smarter.
+      </p>
+      <div class="hero-cta">
+        <a href="/signup" class="btn btn-primary-glow btn-lg">
+          <i class="fas fa-rocket"></i> Start Volunteering
+        </a>
+        <a href="/login?role=admin" class="btn btn-ghost btn-lg">
+          <i class="fas fa-shield-alt"></i> NGO / Admin Login
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-value" data-target="2400">0</span><span>+</span>
+          <span class="stat-label">Volunteers</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value" data-target="850">0</span><span>+</span>
+          <span class="stat-label">Tasks Completed</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-value" data-target="95">0</span><span>%</span>
+          <span class="stat-label">Match Accuracy</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="dashboard-preview">
+        <div class="preview-card preview-card-1">
+          <div class="preview-header">
+            <div class="preview-dot red"></div>
+            <div class="preview-dot yellow"></div>
+            <div class="preview-dot green"></div>
+          </div>
+          <div class="preview-task high">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div>
+              <strong>Medical Camp Setup</strong>
+              <small>HIGH PRIORITY · Delhi</small>
+            </div>
+            <span class="preview-badge assigned">Assigned</span>
+          </div>
+          <div class="preview-task medium">
+            <i class="fas fa-box"></i>
+            <div>
+              <strong>Food Distribution</strong>
+              <small>MEDIUM · Saket</small>
+            </div>
+            <span class="preview-badge open">Open</span>
+          </div>
+          <div class="preview-match">
+            <i class="fas fa-magic"></i>
+            <span>Smart Match: Priya S. — Score <strong>9.2/10</strong></span>
+          </div>
+        </div>
+        <div class="preview-card preview-card-2">
+          <div class="preview-volunteer-card">
+            <div class="pvc-avatar"><i class="fas fa-user"></i></div>
+            <div class="pvc-info">
+              <strong>Priya Sharma</strong>
+              <small>Medical · First Aid</small>
+            </div>
+            <div class="pvc-status online">●</div>
+          </div>
+          <div class="score-bar">
+            <small>Match Score</small>
+            <div class="score-track"><div class="score-fill" style="width:92%"></div></div>
+            <small>9.2</small>
+          </div>
+        </div>
+        <div class="preview-emergency-badge">
+          <i class="fas fa-bolt"></i> Emergency Mode Ready
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section" id="features">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-badge">Platform Features</span>
+        <h2>Everything You Need for Effective Volunteer Management</h2>
+        <p>From smart AI matching to real-time emergency response, Sahaayak has it all.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card feature-card-highlight">
+          <div class="feature-icon"><i class="fas fa-brain"></i></div>
+          <h3>Smart AI Matching</h3>
+          <p>Our scoring algorithm matches volunteers based on skill overlap, proximity, and availability — ensuring the right person gets every task.</p>
+          <div class="feature-formula">Score = (Skill×5) + (Distance×3) + (Availability×2)</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+          <h3>Live Map View</h3>
+          <p>Visualize volunteer locations and task sites on an interactive map. Find nearest volunteers instantly.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+          <h3>Emergency Mode</h3>
+          <p>One toggle activates emergency mode — instantly notifying all nearby volunteers and prioritizing critical tasks.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-bell"></i></div>
+          <h3>Real-time Alerts</h3>
+          <p>WebSocket-powered notifications keep volunteers and admins in sync — task assignments, status updates, and emergencies.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+          <h3>Analytics Dashboard</h3>
+          <p>Track volunteer activity, task completion rates, average response times, and skill demand with beautiful charts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="fas fa-sliders-h"></i></div>
+          <h3>Manual Override</h3>
+          <p>Admins can always override AI suggestions and manually assign specific volunteers when needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works -->
+  <section class="how-section" id="how-it-works">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-badge">How It Works</span>
+        <h2>From Signup to Impact in 4 Simple Steps</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+          <h3>Volunteer Signs Up</h3>
+          <p>Set your profile with skills, availability, and location. Go online when ready to help.</p>
+        </div>
+        <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon"><i class="fas fa-tasks"></i></div>
+          <h3>Admin Creates Task</h3>
+          <p>NGO admins post tasks with required skills, urgency level, and location details.</p>
+        </div>
+        <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon"><i class="fas fa-magic"></i></div>
+          <h3>Smart Auto-Assign</h3>
+          <p>The AI engine scores all available volunteers and assigns the best match instantly.</p>
+        </div>
+        <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+          <h3>Task Completed</h3>
+          <p>Volunteer accepts, performs the task, marks it complete. Analytics updated in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Section -->
+  <section class="impact-section" id="impact">
+    <div class="section-container">
+      <div class="section-header light">
+        <span class="section-badge light">Our Impact</span>
+        <h2>Built for Social Good</h2>
+        <p>Sahaayak is designed to serve communities in both everyday NGO operations and large-scale emergencies.</p>
+      </div>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <i class="fas fa-clock impact-icon"></i>
+          <h3>40% Faster Response</h3>
+          <p>Smart matching reduces volunteer assignment time from hours to seconds.</p>
+        </div>
+        <div class="impact-card">
+          <i class="fas fa-users impact-icon"></i>
+          <h3>3x Volunteer Utilization</h3>
+          <p>Efficient allocation ensures every available volunteer is engaged meaningfully.</p>
+        </div>
+        <div class="impact-card">
+          <i class="fas fa-heart impact-icon"></i>
+          <h3>Zero Volunteer Left Behind</h3>
+          <p>Real-time availability tracking makes sure no willing volunteer is missed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <div class="brand-icon"><i class="fas fa-hands-helping"></i></div>
+        <span>Sahaayak</span>
+      </div>
+      <p>Smart Volunteer Allocation Platform · Built for NGOs &amp; Emergency Response Teams</p>
+      <div class="footer-links">
+        <a href="/login">Login</a>
+        <a href="/signup">Sign Up</a>
+      </div>
+      <p class="footer-copy">© 2024 Sahaayak. Made with ❤️ for social good.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Animate stats counter
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      let current = 0;
+      const step = Math.ceil(target / 60);
+      const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current.toLocaleString();
+        if (current >= target) clearInterval(timer);
+      }, 30);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.querySelectorAll('.stat-value').forEach(animateCounter);
+          observer.disconnect();
+        }
+      });
+    });
+    observer.observe(document.querySelector('.hero-stats'));
+
+    // Hamburger
+    document.getElementById('navHamburger').addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.toggle('open');
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

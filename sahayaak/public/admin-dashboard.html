@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin Dashboard – Sahaayak</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="/css/dashboard.css"/>
+</head>
+<body class="dashboard-body">
+
+<!-- TOP NAV -->
+<nav class="dash-nav">
+  <div class="brand"><div class="brand-icon"><i class="fas fa-hands-helping"></i></div>Sahaayak <span style="font-size:11px;background:rgba(108,99,255,0.2);color:var(--primary);padding:2px 8px;border-radius:50px;margin-left:6px;font-weight:600">ADMIN</span></div>
+  <div class="nav-center" id="emergencyNavBadge" style="display:none">
+    <div style="background:rgba(239,68,68,0.2);border:1px solid #dc2626;padding:6px 20px;border-radius:50px;font-size:12px;color:#fca5a5;display:flex;align-items:center;gap:8px">
+      <i class="fas fa-bolt"></i><strong>EMERGENCY MODE ACTIVE</strong>
+      <button class="btn btn-sm btn-danger" onclick="deactivateEmergency()" style="padding:2px 10px;font-size:11px">Deactivate</button>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="toggle-wrap">
+      <label class="toggle-switch" title="Emergency Mode">
+        <input type="checkbox" id="emergencyToggle" onchange="toggleEmergency(this.checked)"/>
+        <span class="toggle-slider"></span>
+      </label>
+      <span style="font-size:12px;color:var(--text-muted)">Emergency</span>
+    </div>
+    <button class="notif-btn" id="notifBtn"><i class="fas fa-bell"></i><span class="notif-badge hidden" id="notifBadge">0</span></button>
+    <div class="user-pill"><div class="user-avatar" id="userAvatar">A</div><span id="userName">Admin</span></div>
+  </div>
+</nav>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel hidden" id="notifPanel">
+  <div class="notif-panel-header"><h3><i class="fas fa-bell"></i> Notifications</h3><button class="btn btn-sm btn-ghost" onclick="markAllRead()">Mark all read</button></div>
+  <div class="notif-list" id="notifList"><div class="notif-empty"><i class="fas fa-bell-slash"></i><p>No notifications</p></div></div>
+</div>
+
+<!-- LAYOUT -->
+<div class="dash-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">Dashboard</div>
+    <a class="sidebar-link active" onclick="switchTab('overview',this)"><i class="fas fa-tachometer-alt"></i> Overview</a>
+    <a class="sidebar-link" onclick="switchTab('tasks',this)"><i class="fas fa-clipboard-list"></i> Tasks</a>
+    <a class="sidebar-link" onclick="switchTab('volunteers',this)"><i class="fas fa-users"></i> Volunteers</a>
+    <a class="sidebar-link" onclick="switchTab('map',this)"><i class="fas fa-map-marked-alt"></i> Live Map</a>
+    <a class="sidebar-link" onclick="switchTab('analytics',this)"><i class="fas fa-chart-bar"></i> Analytics</a>
+    <div class="sidebar-section">Admin</div>
+    <a class="sidebar-link" onclick="switchTab('broadcast',this)"><i class="fas fa-bullhorn"></i> Broadcast</a>
+    <div class="sidebar-bottom">
+      <a class="sidebar-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-panel active" id="tab-overview">
+      <div class="page-header">
+        <div><h1 class="page-title">NGO Command Center</h1><p class="page-subtitle">Real-time volunteer & task overview</p></div>
+        <div class="page-actions">
+          <button class="btn btn-primary-glow btn-sm" onclick="openCreateTask()"><i class="fas fa-plus"></i> New Task</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadAll()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card purple"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-card-value" id="statVolunteers">0</div><div class="stat-card-label">Total Volunteers</div></div>
+        <div class="stat-card green"><div class="stat-icon"><i class="fas fa-user-check"></i></div><div class="stat-card-value" id="statActive">0</div><div class="stat-card-label">Online Volunteers</div></div>
+        <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-tasks"></i></div><div class="stat-card-value" id="statOpen">0</div><div class="stat-card-label">Open Tasks</div></div>
+        <div class="stat-card cyan"><div class="stat-icon"><i class="fas fa-spinner"></i></div><div class="stat-card-value" id="statAssigned">0</div><div class="stat-card-label">In Progress</div></div>
+        <div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-card-value" id="statCompleted">0</div><div class="stat-card-label">Completed</div></div>
+        <div class="stat-card red"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-card-value" id="statHighUrgency">0</div><div class="stat-card-label">High Urgency</div></div>
+      </div>
+      <!-- Recent tasks quick view -->
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-fire"></i> Recent Tasks</span><button class="btn btn-sm btn-outline" onclick="switchTab('tasks', document.querySelectorAll('.sidebar-link')[1])">View All</button></div>
+        <div class="card-body" style="padding:0"><div class="scroll-area" id="recentTasksList" style="max-height:320px"></div></div>
+      </div>
+    </div>
+
+    <!-- TASKS TAB -->
+    <div class="tab-panel" id="tab-tasks">
+      <div class="page-header">
+        <div><h1 class="page-title"><i class="fas fa-clipboard-list"></i> Task Management</h1></div>
+        <div class="page-actions">
+          <select class="filter-select" id="taskStatusFilter" onchange="renderAdminTasks()">
+            <option value="all">All Status</option>
+            <option value="open">Open</option>
+            <option value="assigned">Assigned</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select class="filter-select" id="taskUrgencyFilter" onchange="renderAdminTasks()">
+            <option value="all">All Urgency</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <button class="btn btn-primary-glow btn-sm" onclick="openCreateTask()"><i class="fas fa-plus"></i> New Task</button>
+        </div>
+      </div>
+      <div class="tasks-grid" id="adminTasksGrid"></div>
+    </div>
+
+    <!-- VOLUNTEERS TAB -->
+    <div class="tab-panel" id="tab-volunteers">
+      <div class="page-header">
+        <div><h1 class="page-title"><i class="fas fa-users"></i> Volunteers</h1></div>
+        <div class="page-actions">
+          <input class="search-input" id="volSearch" placeholder="Search name or skill..." oninput="filterVolunteers()" style="max-width:220px"/>
+          <select class="filter-select" id="volAvailFilter" onchange="filterVolunteers()">
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="busy">Busy</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+      </div>
+      <div class="card" style="overflow:auto">
+        <table class="volunteers-table" id="volTable">
+          <thead><tr><th>Volunteer</th><th>Skills</th><th>Availability</th><th>Status</th><th>Completed</th><th>Actions</th></tr></thead>
+          <tbody id="volTableBody"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MAP TAB -->
+    <div class="tab-panel" id="tab-map">
+      <div class="page-header">
+        <div><h1 class="page-title"><i class="fas fa-map-marked-alt"></i> Live Map</h1><p class="page-subtitle">Tasks and volunteers in real time</p></div>
+        <div class="page-actions"><button class="btn btn-outline btn-sm" onclick="refreshMapData()"><i class="fas fa-sync"></i> Refresh</button></div>
+      </div>
+      <div class="card"><div class="card-body" style="padding:0"><div id="mapContainer" style="height:520px"></div></div></div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;padding:14px 0;font-size:13px">
+        <span style="display:flex;align-items:center;gap:6px"><span style="background:#ef4444;width:12px;height:12px;border-radius:50%;display:inline-block"></span>High Priority Task</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="background:#f59e0b;width:12px;height:12px;border-radius:50%;display:inline-block"></span>Medium Task</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="background:#22c55e;width:12px;height:12px;border-radius:50%;display:inline-block"></span>Low Task</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="background:#6c63ff;width:12px;height:12px;border-radius:50%;display:inline-block"></span>Volunteer (Online)</span>
+        <span style="display:flex;align-items:center;gap:6px"><span style="background:#94a3b8;width:12px;height:12px;border-radius:50%;display:inline-block"></span>Volunteer (Offline)</span>
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div class="tab-panel" id="tab-analytics">
+      <div class="page-header"><div><h1 class="page-title"><i class="fas fa-chart-bar"></i> Analytics</h1><p class="page-subtitle">Platform performance metrics</p></div></div>
+      <div class="stats-row" id="analyticsStats"></div>
+      <div class="charts-grid" id="chartsGrid">
+        <div class="chart-card"><h3>Tasks by Status</h3><div class="chart-canvas-wrap"><canvas id="chartStatus"></canvas></div></div>
+        <div class="chart-card"><h3>Tasks by Urgency</h3><div class="chart-canvas-wrap"><canvas id="chartUrgency"></canvas></div></div>
+        <div class="chart-card" style="grid-column:span 2"><h3>Task Volume (Last 7 Days)</h3><div class="chart-canvas-wrap" style="height:220px"><canvas id="chartTimeline"></canvas></div></div>
+        <div class="chart-card"><h3>Top Skill Demand</h3><div class="chart-canvas-wrap"><canvas id="chartSkills"></canvas></div></div>
+        <div class="chart-card"><h3>Top Volunteers</h3><div id="topVolsList"></div></div>
+      </div>
+    </div>
+
+    <!-- BROADCAST TAB -->
+    <div class="tab-panel" id="tab-broadcast">
+      <div class="page-header"><div><h1 class="page-title"><i class="fas fa-bullhorn"></i> Broadcast</h1><p class="page-subtitle">Send messages to all volunteers</p></div></div>
+      <div class="card" style="max-width:560px">
+        <div class="card-header"><span class="card-title"><i class="fas fa-paper-plane"></i> Send Broadcast</span></div>
+        <div class="card-body">
+          <div id="broadcastAlert" class="alert hidden"></div>
+          <div class="form-group"><label>Title</label><input type="text" id="bcTitle" placeholder="Message title"/></div>
+          <div class="form-group"><label>Message</label><textarea id="bcMessage" rows="4" placeholder="Your message to all volunteers..."></textarea></div>
+          <div class="form-group"><label>Type</label>
+            <select id="bcType">
+              <option value="info">ℹ️ Info</option>
+              <option value="warning">⚠️ Warning</option>
+              <option value="emergency">🚨 Emergency</option>
+            </select>
+          </div>
+          <button class="btn btn-primary-glow btn-block mt-4" onclick="sendBroadcast()"><i class="fas fa-paper-plane"></i> Send to All Volunteers</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- CREATE / EDIT TASK MODAL -->
+<div class="modal-overlay hidden" id="taskFormModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="taskFormTitle">Create Task</span>
+      <button class="modal-close" onclick="closeModal('taskFormModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="taskFormAlert" class="alert hidden"></div>
+      <div class="form-group"><label>Title *</label><input type="text" id="ftTitle" placeholder="Task title"/></div>
+      <div class="form-group"><label>Description *</label><textarea id="ftDesc" rows="3" placeholder="What needs to be done..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label>Urgency</label>
+          <select id="ftUrgency">
+            <option value="low">🟢 Low</option>
+            <option value="medium" selected>🟡 Medium</option>
+            <option value="high">🔴 High</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Duration (min)</label><input type="number" id="ftDuration" value="60" min="5"/></div>
+      </div>
+      <div class="form-group"><label>Location Name</label><input type="text" id="ftLocation" placeholder="Area or address"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Latitude</label><input type="number" id="ftLat" value="28.6139" step="0.0001"/></div>
+        <div class="form-group"><label>Longitude</label><input type="number" id="ftLng" value="77.2090" step="0.0001"/></div>
+      </div>
+      <div class="form-group"><label>Required Skills</label>
+        <div class="skills-grid" id="ftSkills">
+          <button type="button" class="skill-btn" data-skill="first-aid"><i class="fas fa-first-aid"></i> First Aid</button>
+          <button type="button" class="skill-btn" data-skill="medical"><i class="fas fa-heartbeat"></i> Medical</button>
+          <button type="button" class="skill-btn" data-skill="nursing"><i class="fas fa-syringe"></i> Nursing</button>
+          <button type="button" class="skill-btn" data-skill="counseling"><i class="fas fa-brain"></i> Counseling</button>
+          <button type="button" class="skill-btn" data-skill="teaching"><i class="fas fa-chalkboard-teacher"></i> Teaching</button>
+          <button type="button" class="skill-btn" data-skill="logistics"><i class="fas fa-truck"></i> Logistics</button>
+          <button type="button" class="skill-btn" data-skill="driving"><i class="fas fa-car"></i> Driving</button>
+          <button type="button" class="skill-btn" data-skill="coordination"><i class="fas fa-project-diagram"></i> Coordination</button>
+          <button type="button" class="skill-btn" data-skill="heavy-lifting"><i class="fas fa-dumbbell"></i> Heavy Lifting</button>
+          <button type="button" class="skill-btn" data-skill="it-support"><i class="fas fa-laptop-code"></i> IT Support</button>
+          <button type="button" class="skill-btn" data-skill="communication"><i class="fas fa-comments"></i> Communication</button>
+          <button type="button" class="skill-btn" data-skill="cooking"><i class="fas fa-utensils"></i> Cooking</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('taskFormModal')">Cancel</button>
+      <button class="btn btn-primary-glow" id="saveTaskBtn" onclick="saveTask()"><i class="fas fa-save"></i> Save Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- ASSIGN MODAL -->
+<div class="modal-overlay hidden" id="assignModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Assign Volunteer</span>
+      <button class="modal-close" onclick="closeModal('assignModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="assignModalBody"></div>
+    <div class="modal-footer" id="assignModalFooter"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

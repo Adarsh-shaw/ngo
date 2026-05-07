@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up – Sahaayak</title>
+  <meta name="description" content="Create your Sahaayak volunteer account" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body class="auth-page">
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <a href="/" class="brand-logo">
+          <div class="brand-icon"><i class="fas fa-hands-helping"></i></div>
+          <span>Sahaayak</span>
+        </a>
+      </div>
+      <h1 class="auth-title">Join as a Volunteer</h1>
+      <p class="auth-subtitle">Create your free account to start making a difference</p>
+
+      <div id="signupAlert" class="alert hidden"></div>
+
+      <div class="mt-4 mb-4">
+        <button type="button" class="btn btn-outline btn-block" id="googleSignupBtn" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: white; color: #333; border: 1px solid #ddd; font-weight: 500;">
+          <i class="fab fa-google" style="color: #DB4437;"></i> Sign up with Google
+        </button>
+        <div style="text-align: center; margin: 15px 0; color: #888; font-size: 0.9rem; position: relative;">
+          <span style="background: var(--bg-card); padding: 0 10px; position: relative; z-index: 1;">OR EMAIL</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #333; z-index: 0;"></div>
+        </div>
+      </div>
+
+      <form id="signupForm" class="auth-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="signupName"><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="signupName" placeholder="Your full name" required />
+          </div>
+          <div class="form-group">
+            <label for="signupPhone"><i class="fas fa-phone"></i> Phone Number</label>
+            <input type="tel" id="signupPhone" placeholder="+91-XXXXXXXXXX" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail"><i class="fas fa-envelope"></i> Email Address</label>
+          <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="signupPassword"><i class="fas fa-lock"></i> Password</label>
+          <div class="input-with-icon">
+            <input type="password" id="signupPassword" placeholder="Minimum 6 characters" required autocomplete="new-password" />
+            <button type="button" class="toggle-password" onclick="togglePassword('signupPassword', this)">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+          <div class="password-strength" id="strengthBar">
+            <div class="strength-fill" id="strengthFill"></div>
+          </div>
+          <small id="strengthText" class="strength-text"></small>
+        </div>
+
+        <!-- Skills Selection -->
+        <div class="form-group">
+          <label><i class="fas fa-tools"></i> Your Skills <small>(select all that apply)</small></label>
+          <div class="skills-grid" id="skillsGrid">
+            <button type="button" class="skill-btn" data-skill="first-aid"><i class="fas fa-first-aid"></i> First Aid</button>
+            <button type="button" class="skill-btn" data-skill="medical"><i class="fas fa-heartbeat"></i> Medical</button>
+            <button type="button" class="skill-btn" data-skill="nursing"><i class="fas fa-syringe"></i> Nursing</button>
+            <button type="button" class="skill-btn" data-skill="counseling"><i class="fas fa-brain"></i> Counseling</button>
+            <button type="button" class="skill-btn" data-skill="teaching"><i class="fas fa-chalkboard-teacher"></i> Teaching</button>
+            <button type="button" class="skill-btn" data-skill="logistics"><i class="fas fa-truck"></i> Logistics</button>
+            <button type="button" class="skill-btn" data-skill="driving"><i class="fas fa-car"></i> Driving</button>
+            <button type="button" class="skill-btn" data-skill="coordination"><i class="fas fa-project-diagram"></i> Coordination</button>
+            <button type="button" class="skill-btn" data-skill="heavy-lifting"><i class="fas fa-dumbbell"></i> Heavy Lifting</button>
+            <button type="button" class="skill-btn" data-skill="it-support"><i class="fas fa-laptop-code"></i> IT Support</button>
+            <button type="button" class="skill-btn" data-skill="communication"><i class="fas fa-comments"></i> Communication</button>
+            <button type="button" class="skill-btn" data-skill="cooking"><i class="fas fa-utensils"></i> Cooking</button>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="form-group">
+          <label><i class="fas fa-map-marker-alt"></i> Your Location</label>
+          <div class="location-input-group">
+            <input type="text" id="signupLocation" placeholder="Enter your city / area" />
+            <button type="button" class="btn btn-outline btn-sm" id="detectLocation">
+              <i class="fas fa-crosshairs"></i> Detect
+            </button>
+          </div>
+          <input type="hidden" id="signupLat" value="0" />
+          <input type="hidden" id="signupLng" value="0" />
+        </div>
+
+        <button type="submit" class="btn btn-primary-glow btn-block" id="signupBtn">
+          <span id="signupBtnText"><i class="fas fa-user-plus"></i> Create Account</span>
+          <span id="signupSpinner" class="spinner hidden"></span>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p>Already have an account? <a href="/login">Sign in here</a></p>
+      </div>
+    </div>
+
+    <div class="auth-visual">
+      <div class="auth-visual-content">
+        <h2>Start Your<br/>Volunteer Journey</h2>
+        <p>Connect with NGOs, discover meaningful tasks, and track your impact — all in one place.</p>
+        <div class="auth-features">
+          <div class="af-item"><i class="fas fa-check-circle"></i> Free to join, always</div>
+          <div class="af-item"><i class="fas fa-check-circle"></i> Set your own availability</div>
+          <div class="af-item"><i class="fas fa-check-circle"></i> Get matched by skills</div>
+          <div class="af-item"><i class="fas fa-check-circle"></i> Track your impact</div>
+        </div>
+        <div class="auth-volunteer-count">
+          <i class="fas fa-users"></i>
+          <span>Join <strong>2,400+</strong> volunteers already making a difference</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword(id, btn) {
+      const input = document.getElementById(id);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.innerHTML = input.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    }
+
+    // Skills toggle
+    const selectedSkills = new Set();
+    document.querySelectorAll('.skill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const skill = btn.dataset.skill;
+        if (selectedSkills.has(skill)) {
+          selectedSkills.delete(skill);
+          btn.classList.remove('active');
+        } else {
+          selectedSkills.add(skill);
+          btn.classList.add('active');
+        }
+      });
+    });
+
+    // Password strength
+    document.getElementById('signupPassword').addEventListener('input', function() {
+      const v = this.value;
+      let strength = 0;
+      if (v.length >= 6) strength++;
+      if (v.length >= 10) strength++;
+      if (/[A-Z]/.test(v)) strength++;
+      if (/[0-9]/.test(v)) strength++;
+      if (/[^A-Za-z0-9]/.test(v)) strength++;
+      const fill = document.getElementById('strengthFill');
+      const text = document.getElementById('strengthText');
+      const colors = ['#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+      const labels = ['Very Weak','Weak','Fair','Strong','Very Strong'];
+      fill.style.width = `${(strength / 5) * 100}%`;
+      fill.style.background = colors[strength - 1] || '#333';
+      text.textContent = v ? labels[strength - 1] || '' : '';
+      text.style.color = colors[strength - 1] || '';
+    });
+
+    // Geolocation detect
+    document.getElementById('detectLocation').addEventListener('click', () => {
+      if (!navigator.geolocation) return alert('Geolocation not supported.');
+      navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('signupLat').value = pos.coords.latitude;
+        document.getElementById('signupLng').value = pos.coords.longitude;
+        document.getElementById('signupLocation').value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+        document.getElementById('signupLocation').placeholder = 'Location detected ✓';
+      }, () => alert('Could not detect location. Please enter manually.'));
+    });
+
+    function showAlert(msg, type = 'error') {
+      const alert = document.getElementById('signupAlert');
+      alert.textContent = msg;
+      alert.className = `alert alert-${type}`;
+    }
+
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('signupBtn');
+      document.getElementById('signupBtnText').classList.add('hidden');
+      document.getElementById('signupSpinner').classList.remove('hidden');
+      btn.disabled = true;
+
+      const body = {
+        name: document.getElementById('signupName').value,
+        email: document.getElementById('signupEmail').value,
+        password: document.getElementById('signupPassword').value,
+        phone: document.getElementById('signupPhone').value,
+        role: 'volunteer',
+        skills: [...selectedSkills],
+        latitude: parseFloat(document.getElementById('signupLat').value),
+        longitude: parseFloat(document.getElementById('signupLng').value),
+        location_name: document.getElementById('signupLocation').value,
+      };
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Signup failed');
+
+        // Also update profile with skills/location
+        await fetch('/api/volunteers/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.token}` },
+          body: JSON.stringify({ name: body.name, phone: body.phone, skills: body.skills, availability: 'available', latitude: body.latitude, longitude: body.longitude, location_name: body.location_name })
+        });
+
+        localStorage.setItem('sahaayak_token', data.token);
+        localStorage.setItem('sahaayak_user', JSON.stringify(data.user));
+        showAlert('Account created! Redirecting...', 'success');
+        setTimeout(() => { window.location.href = '/volunteer-dashboard'; }, 800);
+      } catch (err) {
+        showAlert(err.message);
+        document.getElementById('signupBtnText').classList.remove('hidden');
+        document.getElementById('signupSpinner').classList.add('hidden');
+        btn.disabled = false;
+      }
+    });
+  </script>
+  
+  <script type="module">
+    import { signInWithGoogle } from '/js/firebase-auth.js';
+    
+    document.getElementById('googleSignupBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('googleSignupBtn');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner"></span> Signing up...';
+      btn.disabled = true;
+      
+      try {
+        const data = await signInWithGoogle();
+        localStorage.setItem('sahaayak_token', data.token);
+        localStorage.setItem('sahaayak_user', JSON.stringify(data.user));
+
+        const alert = document.getElementById('signupAlert');
+        alert.textContent = 'Google Signup successful! Redirecting...';
+        alert.className = `alert alert-success`;
+        alert.classList.remove('hidden');
+        
+        setTimeout(() => {
+          window.location.href = data.user.role === 'admin' ? '/admin-dashboard' : '/volunteer-dashboard';
+        }, 800);
+      } catch (err) {
+        const alert = document.getElementById('signupAlert');
+        alert.textContent = err.message;
+        alert.className = `alert alert-error`;
+        alert.classList.remove('hidden');
+        
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

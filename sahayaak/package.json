@@ -1,0 +1,25 @@
+{
+  "name": "sahaayak",
+  "version": "1.0.0",
+  "description": "Smart Volunteer Allocation Platform for NGOs and Emergency Response Teams",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-validator": "^7.3.2",
+    "firebase-admin": "^13.8.0",
+    "jsonwebtoken": "^9.0.3",
+    "lokijs": "^1.5.12",
+    "socket.io": "^4.8.3",
+    "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

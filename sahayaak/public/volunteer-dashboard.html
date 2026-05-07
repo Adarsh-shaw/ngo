@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Volunteer Dashboard – Sahaayak</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="/css/main.css"/>
+  <link rel="stylesheet" href="/css/dashboard.css"/>
+</head>
+<body class="dashboard-body">
+
+<!-- TOP NAV -->
+<nav class="dash-nav">
+  <div class="brand"><div class="brand-icon"><i class="fas fa-hands-helping"></i></div>Sahaayak</div>
+  <div class="nav-center" id="emergencyBannerNav" style="display:none">
+    <div style="background:rgba(239,68,68,0.2);border:1px solid #dc2626;padding:6px 16px;border-radius:50px;font-size:12px;color:#fca5a5;display:flex;align-items:center;gap:8px;animation:emergencyPulse 2s infinite">
+      <i class="fas fa-bolt"></i> <strong>EMERGENCY MODE ACTIVE</strong>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="notif-btn" id="notifBtn" title="Notifications">
+      <i class="fas fa-bell"></i>
+      <span class="notif-badge hidden" id="notifBadge">0</span>
+    </button>
+    <div class="user-pill" id="userPill">
+      <div class="user-avatar" id="userAvatar">V</div>
+      <span id="userName">Loading...</span>
+      <div class="online-dot"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notif-panel hidden" id="notifPanel">
+  <div class="notif-panel-header">
+    <h3><i class="fas fa-bell"></i> Notifications</h3>
+    <button class="btn btn-sm btn-ghost" onclick="markAllRead()">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notifList"><div class="notif-empty"><i class="fas fa-bell-slash"></i><p>No notifications</p></div></div>
+</div>
+
+<!-- DASHBOARD LAYOUT -->
+<div class="dash-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">Main</div>
+    <a class="sidebar-link active" data-tab="overview" onclick="switchTab('overview',this)"><i class="fas fa-home"></i> Overview</a>
+    <a class="sidebar-link" data-tab="my-tasks" onclick="switchTab('my-tasks',this)"><i class="fas fa-tasks"></i> My Tasks</a>
+    <a class="sidebar-link" data-tab="map" onclick="switchTab('map',this)"><i class="fas fa-map-marked-alt"></i> Map View</a>
+    <div class="sidebar-section">Account</div>
+    <a class="sidebar-link" data-tab="profile" onclick="switchTab('profile',this)"><i class="fas fa-user-circle"></i> My Profile</a>
+    <div class="sidebar-bottom">
+      <a class="sidebar-link" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- EMERGENCY BANNER -->
+    <div id="emergencyBanner" class="emergency-banner hidden">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div class="emergency-banner-text">
+        <h3>🚨 Emergency Mode Active</h3>
+        <p id="emergencyTitle">Emergency situation in progress. Stay alert!</p>
+      </div>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div class="tab-panel active" id="tab-overview">
+      <div class="page-header">
+        <div><h1 class="page-title">Welcome back, <span id="greetName">Volunteer</span>! 👋</h1>
+        <p class="page-subtitle">Here's your activity summary</p></div>
+        <div class="page-actions">
+          <button class="btn btn-outline btn-sm" onclick="updateMyLocation()"><i class="fas fa-crosshairs"></i> Update Location</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card purple"><div class="stat-icon"><i class="fas fa-tasks"></i></div><div class="stat-card-value" id="statTotal">0</div><div class="stat-card-label">Total Assigned</div></div>
+        <div class="stat-card orange"><div class="stat-icon"><i class="fas fa-spinner"></i></div><div class="stat-card-value" id="statInProgress">0</div><div class="stat-card-label">In Progress</div></div>
+        <div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-card-value" id="statCompleted">0</div><div class="stat-card-label">Completed</div></div>
+        <div class="stat-card cyan"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-card-value" id="statAvgTime">--</div><div class="stat-card-label">Avg Response (min)</div></div>
+      </div>
+
+      <!-- Active tasks -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fas fa-fire"></i> Active Tasks</span>
+          <button class="btn btn-sm btn-outline" onclick="switchTab('my-tasks', document.querySelector('[data-tab=my-tasks]'))">View All</button>
+        </div>
+        <div class="card-body" id="activeTasks">
+          <div class="empty-state"><i class="fas fa-inbox"></i><h3>No active tasks</h3><p>Tasks assigned to you will appear here.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MY TASKS TAB -->
+    <div class="tab-panel" id="tab-my-tasks">
+      <div class="page-header">
+        <div><h1 class="page-title"><i class="fas fa-tasks"></i> My Tasks</h1></div>
+        <div class="page-actions">
+          <select class="filter-select" id="taskFilter" onchange="renderTasks()">
+            <option value="all">All Tasks</option>
+            <option value="assigned">Assigned</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="tasks-grid" id="tasksGrid">
+        <div class="empty-state"><i class="fas fa-inbox"></i><h3>No tasks yet</h3><p>You'll be notified when tasks are assigned to you.</p></div>
+      </div>
+    </div>
+
+    <!-- MAP TAB -->
+    <div class="tab-panel" id="tab-map">
+      <div class="page-header">
+        <div><h1 class="page-title"><i class="fas fa-map-marked-alt"></i> Live Map</h1>
+        <p class="page-subtitle">Your location and nearby tasks</p></div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <div id="mapContainer" style="height:480px"></div>
+        </div>
+      </div>
+      <div class="map-legend mt-4" style="display:flex;gap:20px;flex-wrap:wrap;padding:12px 0">
+        <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="background:#ef4444;width:12px;height:12px;border-radius:50%;display:inline-block"></span>High Priority Task</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="background:#f59e0b;width:12px;height:12px;border-radius:50%;display:inline-block"></span>Medium Priority Task</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:13px"><span style="background:#22c55e;width:12px;height:12px;border-radius:50%;display:inline-block"></span>Low Priority / You</span>
+      </div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="tab-panel" id="tab-profile">
+      <div class="page-header">
+        <div><h1 class="page-title"><i class="fas fa-user-circle"></i> My Profile</h1></div>
+        <div class="page-actions">
+          <button class="btn btn-primary-glow btn-sm" onclick="saveProfile()"><i class="fas fa-save"></i> Save Changes</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start" class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-avatar-lg" id="profileAvatar">V</div>
+          <div class="profile-name" id="profileName">Loading...</div>
+          <div class="profile-role">Volunteer</div>
+          <div class="profile-stats">
+            <div><div class="profile-stat-value" id="profileCompleted">0</div><div class="profile-stat-label">Completed</div></div>
+            <div><div class="profile-stat-value" id="profileRating">5.0</div><div class="profile-stat-label">Rating</div></div>
+            <div><div class="profile-stat-value" id="profilePoints">0</div><div class="profile-stat-label">Points 🏆</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;text-align:left">
+            <div class="form-group">
+              <label>Availability</label>
+              <select id="profileAvailability">
+                <option value="available">✅ Available</option>
+                <option value="busy">🟡 Busy</option>
+                <option value="unavailable">🔴 Unavailable</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title"><i class="fas fa-edit"></i> Edit Profile</span></div>
+          <div class="card-body">
+            <div id="profileAlert" class="alert hidden"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Full Name</label><input type="text" id="editName" /></div>
+              <div class="form-group"><label>Phone</label><input type="tel" id="editPhone" /></div>
+            </div>
+            <div class="form-group"><label>Bio</label><textarea id="editBio" rows="3" placeholder="Tell us about yourself..."></textarea></div>
+            <div class="form-group">
+              <label>Skills</label>
+              <div class="skills-grid" id="editSkills">
+                <button type="button" class="skill-btn" data-skill="first-aid"><i class="fas fa-first-aid"></i> First Aid</button>
+                <button type="button" class="skill-btn" data-skill="medical"><i class="fas fa-heartbeat"></i> Medical</button>
+                <button type="button" class="skill-btn" data-skill="nursing"><i class="fas fa-syringe"></i> Nursing</button>
+                <button type="button" class="skill-btn" data-skill="counseling"><i class="fas fa-brain"></i> Counseling</button>
+                <button type="button" class="skill-btn" data-skill="teaching"><i class="fas fa-chalkboard-teacher"></i> Teaching</button>
+                <button type="button" class="skill-btn" data-skill="logistics"><i class="fas fa-truck"></i> Logistics</button>
+                <button type="button" class="skill-btn" data-skill="driving"><i class="fas fa-car"></i> Driving</button>
+                <button type="button" class="skill-btn" data-skill="coordination"><i class="fas fa-project-diagram"></i> Coordination</button>
+                <button type="button" class="skill-btn" data-skill="heavy-lifting"><i class="fas fa-dumbbell"></i> Heavy Lifting</button>
+                <button type="button" class="skill-btn" data-skill="it-support"><i class="fas fa-laptop-code"></i> IT Support</button>
+                <button type="button" class="skill-btn" data-skill="communication"><i class="fas fa-comments"></i> Communication</button>
+                <button type="button" class="skill-btn" data-skill="cooking"><i class="fas fa-utensils"></i> Cooking</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <div class="location-input-group">
+                <input type="text" id="editLocation" placeholder="Your city / area"/>
+                <button class="btn btn-outline btn-sm" onclick="detectMyLocation()"><i class="fas fa-crosshairs"></i> Detect</button>
+              </div>
+              <input type="hidden" id="editLat" value="0"/>
+              <input type="hidden" id="editLng" value="0"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TASK ACTION MODAL -->
+<div class="modal-overlay hidden" id="taskModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="taskModalTitle">Task Details</span>
+      <button class="modal-close" onclick="closeModal('taskModal')"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="taskModalBody"></div>
+    <div class="modal-footer" id="taskModalFooter"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/volunteer.js"></script>
+</body>
+</html>
